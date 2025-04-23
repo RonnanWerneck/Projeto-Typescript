@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Salas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: rgb(226, 93, 93)
+    }
+
+    header {
+      background-color: #6d3131;
+      padding: 15px;
+      text-align: center;
+    }
+
+    header a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    form label {
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    form input, form select, form button {
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+
+    h2 {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">Início</a>
+    <a href="cadastro-filmes.html">Cadastro de Filmes</a>
+    <a href="cadastro-salas.html">Cadastro de Salas</a>
+    <a href="cadastro-sessoes.html">Cadastro de Sessões</a>
+    <a href="venda-ingressos.html">Venda de Ingressos</a>
+    <a href="sessoes.html">Sessões Disponíveis</a>
+  </header>
+
+  <main>
+    <h1>Cadastro de Salas</h1>
+    <form id="form-sala">
+      <label for="nomeSala">Nome da Sala</label>
+      <input type="text" id="nomeSala" required>
+
+      <label for="capacidade">Capacidade</label>
+      <input type="number" id="capacidade" required>
+
+      <label for="tipo">Tipo</label>
+      <select id="tipo" required>
+        <option value="">Selecione</option>
+        <option>2D</option>
+        <option>3D</option>
+        <option>IMAX</option>
+      </select>
+
+      <button type="submit">Salvar Sala</button>
+    </form>
+
+    <h2>Salas Cadastradas</h2>
+    <table id="tabela-salas">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Capacidade</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Conteúdo dinâmico -->
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    const formSala = document.getElementById('form-sala');
+    const tabelaSalas = document.getElementById('tabela-salas').querySelector('tbody');
+
+    const carregarSalas = () => {
+      tabelaSalas.innerHTML = '';
+      const salas = JSON.parse(localStorage.getItem('salas')) || [];
+
+      salas.forEach(sala => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${sala.nome}</td>
+          <td>${sala.capacidade}</td>
+          <td>${sala.tipo}</td>
+        `;
+        tabelaSalas.appendChild(tr);
+      });
+    };
+
+    formSala.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const novaSala = {
+        nome: document.getElementById('nomeSala').value,
+        capacidade: document.getElementById('capacidade').value,
+        tipo: document.getElementById('tipo').value
+      };
+
+      const salas = JSON.parse(localStorage.getItem('salas')) || [];
+      salas.push(novaSala);
+      localStorage.setItem('salas', JSON.stringify(salas));
+
+      formSala.reset();
+      carregarSalas();
+    });
+
+    window.addEventListener('load', carregarSalas);
+  </script>
+</body>
+</html>

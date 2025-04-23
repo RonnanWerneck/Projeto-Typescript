@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Filmes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: rgb(226, 93, 93)
+    }
+
+    header {
+      background-color: #6d3131;
+      padding: 15px;
+      text-align: center;
+    }
+
+    header a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    form label {
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    form input, form select, form textarea, form button {
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+
+    h2 {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">Início</a>
+    <a href="cadastro-filmes.html">Cadastro de Filmes</a>
+    <a href="cadastro-salas.html">Cadastro de Salas</a>
+    <a href="cadastro-sessoes.html">Cadastro de Sessões</a>
+    <a href="venda-ingressos.html">Venda de Ingressos</a>
+    <a href="sessoes.html">Sessões Disponíveis</a>
+  </header>
+
+  <main>
+    <h1>Cadastro de Filmes</h1>
+    <form id="form-filme">
+      <label for="titulo">Título</label>
+      <input type="text" id="titulo" required>
+
+      <label for="descricao">Descrição</label>
+      <textarea id="descricao" required></textarea>
+
+      <label for="genero">Gênero</label>
+      <select id="genero" required>
+        <option value="">Selecione</option>
+        <option>Ação</option>
+        <option>Comédia</option>
+        <option>Drama</option>
+        <option>Terror</option>
+        <option>Ficção Científica</option>
+        <option>Romance</option>
+      </select>
+
+      <label for="classificacao">Classificação Indicativa</label>
+      <select id="classificacao" required>
+        <option value="">Selecione</option>
+        <option>Livre</option>
+        <option>10 anos</option>
+        <option>12 anos</option>
+        <option>14 anos</option>
+        <option>16 anos</option>
+        <option>18 anos</option>
+      </select>
+
+      <label for="duracao">Duração (min)</label>
+      <input type="number" id="duracao" required>
+
+      <label for="estreia">Data de Estreia</label>
+      <input type="date" id="estreia" required>
+
+      <button type="submit">Salvar Filme</button>
+    </form>
+
+    <h2>Filmes Cadastrados</h2>
+    <table id="tabela-filmes">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Gênero</th>
+          <th>Classificação</th>
+          <th>Duração</th>
+          <th>Estreia</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Linhas dinâmicas -->
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    const form = document.getElementById('form-filme');
+    const tabela = document.getElementById('tabela-filmes').querySelector('tbody');
+
+    const carregarFilmes = () => {
+      tabela.innerHTML = '';
+      const filmes = JSON.parse(localStorage.getItem('filmes')) || [];
+
+      filmes.forEach(filme => {
+        const linha = document.createElement('tr');
+        linha.innerHTML = `
+          <td>${filme.titulo}</td>
+          <td>${filme.genero}</td>
+          <td>${filme.classificacao}</td>
+          <td>${filme.duracao} min</td>
+          <td>${filme.estreia}</td>
+        `;
+        tabela.appendChild(linha);
+      });
+    };
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const novoFilme = {
+        titulo: document.getElementById('titulo').value,
+        descricao: document.getElementById('descricao').value,
+        genero: document.getElementById('genero').value,
+        classificacao: document.getElementById('classificacao').value,
+        duracao: document.getElementById('duracao').value,
+        estreia: document.getElementById('estreia').value
+      };
+
+      const filmes = JSON.parse(localStorage.getItem('filmes')) || [];
+      filmes.push(novoFilme);
+      localStorage.setItem('filmes', JSON.stringify(filmes));
+
+      form.reset();
+      carregarFilmes();
+    });
+
+    window.addEventListener('load', carregarFilmes);
+  </script>
+</body>
+</html>

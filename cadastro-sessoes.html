@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Sessões</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: rgb(226, 93, 93)
+    }
+
+    header {
+      background-color: #6d3131;
+      padding: 15px;
+      text-align: center;
+    }
+
+    header a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    form label {
+      margin-top: 10px;
+    }
+
+    form input, form select, form button {
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    h2 {
+      margin-top: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">Início</a>
+    <a href="cadastro-filmes.html">Cadastro de Filmes</a>
+    <a href="cadastro-salas.html">Cadastro de Salas</a>
+    <a href="cadastro-sessoes.html">Cadastro de Sessões</a>
+    <a href="venda-ingressos.html">Venda de Ingressos</a>
+    <a href="sessoes.html">Sessões Disponíveis</a>
+  </header>
+
+  <main>
+    <h1>Cadastro de Sessões</h1>
+    <form id="form-sessao">
+      <label for="filme">Filme</label>
+      <select id="filme" required></select>
+
+      <label for="sala">Sala</label>
+      <select id="sala" required></select>
+
+      <label for="dataHora">Data e Hora</label>
+      <input type="datetime-local" id="dataHora" required>
+
+      <label for="preco">Preço</label>
+      <input type="number" id="preco" required>
+
+      <label for="idioma">Idioma</label>
+      <select id="idioma" required>
+        <option value="">Selecione</option>
+        <option>Dublado</option>
+        <option>Legendado</option>
+      </select>
+
+      <label for="formato">Formato</label>
+      <select id="formato" required>
+        <option value="">Selecione</option>
+        <option>2D</option>
+        <option>3D</option>
+      </select>
+
+      <button type="submit">Salvar Sessão</button>
+    </form>
+
+    <h2>Sessões Cadastradas</h2>
+    <table id="tabela-sessoes">
+      <thead>
+        <tr>
+          <th>Filme</th>
+          <th>Sala</th>
+          <th>Data e Hora</th>
+          <th>Preço</th>
+          <th>Idioma</th>
+          <th>Formato</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <script>
+    const filmeSelect = document.getElementById('filme');
+    const salaSelect = document.getElementById('sala');
+    const tabelaSessoes = document.getElementById('tabela-sessoes').querySelector('tbody');
+    const formSessao = document.getElementById('form-sessao');
+
+    const carregarFilmesSalas = () => {
+      const filmes = JSON.parse(localStorage.getItem('filmes')) || [];
+      const salas = JSON.parse(localStorage.getItem('salas')) || [];
+
+      filmeSelect.innerHTML = '<option value="">Selecione</option>';
+      salaSelect.innerHTML = '<option value="">Selecione</option>';
+
+      filmes.forEach(filme => {
+        const opt = document.createElement('option');
+        opt.value = filme.titulo;
+        opt.textContent = filme.titulo;
+        filmeSelect.appendChild(opt);
+      });
+
+      salas.forEach(sala => {
+        const opt = document.createElement('option');
+        opt.value = sala.nome;
+        opt.textContent = sala.nome;
+        salaSelect.appendChild(opt);
+      });
+    };
+
+    const carregarSessoes = () => {
+      tabelaSessoes.innerHTML = '';
+      const sessoes = JSON.parse(localStorage.getItem('sessoes')) || [];
+
+      sessoes.forEach(sessao => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${sessao.filme}</td>
+          <td>${sessao.sala}</td>
+          <td>${new Date(sessao.dataHora).toLocaleString('pt-BR')}</td>
+          <td>R$ ${Number(sessao.preco).toFixed(2)}</td>
+          <td>${sessao.idioma}</td>
+          <td>${sessao.formato}</td>
+        `;
+        tabelaSessoes.appendChild(tr);
+      });
+    };
+
+    formSessao.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const novaSessao = {
+        filme: filmeSelect.value,
+        sala: salaSelect.value,
+        dataHora: document.getElementById('dataHora').value,
+        preco: document.getElementById('preco').value,
+        idioma: document.getElementById('idioma').value,
+        formato: document.getElementById('formato').value
+      };
+
+      const sessoes = JSON.parse(localStorage.getItem('sessoes')) || [];
+      sessoes.push(novaSessao);
+      localStorage.setItem('sessoes', JSON.stringify(sessoes));
+
+      formSessao.reset();
+      carregarSessoes();
+    });
+
+    window.addEventListener('load', () => {
+      carregarFilmesSalas();
+      carregarSessoes();
+    });
+  </script>
+</body>
+</html>
